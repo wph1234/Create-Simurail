@@ -13,11 +13,9 @@
 
 	"gui.simurail.no_options": "无选项",
 
-	"gui.simurail.physics_bogey.title": "物理转向架",
-	"gui.simurail.physics_bogey.title.inverted": "倒置物理转向架",
-	"gui.simurail.physics_bogey.behaviour": "运行状态",
-	"gui.simurail.physics_bogey.behaviour.enabled": "启用",
-	"gui.simurail.physics_bogey.behaviour.disabled": "停用",
+	"gui.simurail.physics_bogey.physics": "物理运行状态",
+	"gui.simurail.physics_bogey.physics.enabled": "启用",
+	"gui.simurail.physics_bogey.physics.disabled": "停用",
 	"gui.simurail.physics_bogey.rotation": "转向架框旋转",
 	"gui.simurail.physics_bogey.rotation.disallow": "禁止",
 	"gui.simurail.physics_bogey.rotation.allow": "允许",
@@ -42,6 +40,7 @@
 	"gui.simurail.physics_bogey.connector.invisible": "不可见",
 	"gui.simurail.physics_bogey.connector.front": "仅前",
 	"gui.simurail.physics_bogey.connector.back": "仅后",
+	"gui.simurail.physics_bogey.controlled_by_computer": "由计算机控制",
 	"gui.simurail.physics_bogey.type": "更换转向架类型",
 
 	"gui.simurail.physics_bogey.category": "类别",

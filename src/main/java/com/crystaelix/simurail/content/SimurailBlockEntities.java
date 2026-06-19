@@ -10,6 +10,8 @@ import com.crystaelix.simurail.content.bogey.PhysicsBogeyVisual;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.tterrag.registrate.util.entry.BlockEntityEntry;
 
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+
 public class SimurailBlockEntities {
 
 	private static final CreateRegistrate REGISTRATE = Simurail.registrate();
@@ -28,5 +30,9 @@ public class SimurailBlockEntities {
 			register();
 
 	public static void register() {
+	}
+
+	public static void registerCapabilities(RegisterCapabilitiesEvent event) {
+		PhysicsBogeyBlockEntity.registerCapabilities(event);
 	}
 }

@@ -13,11 +13,9 @@
 
 	"gui.simurail.no_options": "無選項",
 
-	"gui.simurail.physics_bogey.title": "物理轉向架",
-	"gui.simurail.physics_bogey.title.inverted": "倒置物理轉向架",
-	"gui.simurail.physics_bogey.behaviour": "運行狀態",
-	"gui.simurail.physics_bogey.behaviour.enabled": "啟用",
-	"gui.simurail.physics_bogey.behaviour.disabled": "停用",
+	"gui.simurail.physics_bogey.physics": "物理運行狀態",
+	"gui.simurail.physics_bogey.physics.enabled": "啟用",
+	"gui.simurail.physics_bogey.physics.disabled": "停用",
 	"gui.simurail.physics_bogey.rotation": "轉向架框旋轉",
 	"gui.simurail.physics_bogey.rotation.disallow": "禁止",
 	"gui.simurail.physics_bogey.rotation.allow": "允許",
@@ -42,6 +40,7 @@
 	"gui.simurail.physics_bogey.connector.invisible": "不可見",
 	"gui.simurail.physics_bogey.connector.front": "僅前",
 	"gui.simurail.physics_bogey.connector.back": "僅後",
+	"gui.simurail.physics_bogey.controlled_by_computer": "由電腦控制",
 	"gui.simurail.physics_bogey.type": "更換轉向架類型",
 
 	"gui.simurail.physics_bogey.category": "類別",

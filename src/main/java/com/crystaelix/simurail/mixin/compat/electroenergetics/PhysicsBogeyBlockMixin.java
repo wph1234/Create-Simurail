@@ -6,9 +6,9 @@ import java.util.Map;
 
 import org.spongepowered.asm.mixin.Mixin;
 
-import com.crystaelix.simurail.compat.electroenergetics.PhysicsBogeyDevice;
 import com.crystaelix.simurail.compat.electroenergetics.SimurailDeviceTypes;
 import com.crystaelix.simurail.compat.electroenergetics.SimurailNodeConfigurations;
+import com.crystaelix.simurail.compat.electroenergetics.device.PhysicsBogeyDevice;
 import com.crystaelix.simurail.content.bogey.PhysicsBogeyBlock;
 import com.george_vi.electroenergetics.CEEItems;
 import com.george_vi.electroenergetics.config.CEEConfigs;

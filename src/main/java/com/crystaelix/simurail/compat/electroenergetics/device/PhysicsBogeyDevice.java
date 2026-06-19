@@ -1,4 +1,4 @@
-package com.crystaelix.simurail.compat.electroenergetics;
+package com.crystaelix.simurail.compat.electroenergetics.device;
 
 import com.crystaelix.simurail.content.bogey.PhysicsBogeyBlockEntity;
 import com.george_vi.electroenergetics.devices.device.DevicesSavedData;
@@ -26,7 +26,7 @@ public class PhysicsBogeyDevice extends SimpleElectricalDevice {
 			if(be.isRemoved()) {
 				be = null;
 			}
-			else if(be.getAxle(true).hasTrack() || be.getAxle(false).hasTrack()) {
+			else if(be.hasTrack()) {
 				bridges.builder(pos).ground(0, 1);
 				bridges.builder(pos).ground(1, 1);
 				bridges.builder(pos).ground(2, 1);

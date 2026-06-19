@@ -42,7 +42,6 @@ import com.simibubi.create.foundation.gui.widget.ScrollInput;
 import foundry.veil.api.network.VeilPacketManager;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
-import net.createmod.catnip.gui.AbstractSimiScreen;
 import net.createmod.catnip.gui.TextureSheetSegment;
 import net.createmod.catnip.gui.element.GuiGameElement;
 import net.createmod.catnip.render.CachedBuffers;
@@ -52,6 +51,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.CommonComponents;
@@ -60,7 +60,7 @@ import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
-public class PhysicsBogeyMenuScreen extends AbstractSimiScreen {
+public class PhysicsBogeyMenuScreen extends PhysicsBogeyScreen {
 
 	public static final SimurailGuiTextures BACKGROUND = SimurailGuiTextures.PHYSICS_BOGEY_MENU;
 
@@ -77,9 +77,10 @@ public class PhysicsBogeyMenuScreen extends AbstractSimiScreen {
 	public static final Component CONFIRM_TOOLTIP = Component.translatable("create.action.confirm");
 	public static final Component OPTIONS_TOOLTIP = Component.translatable("gui.simurail.physics_bogey.options");
 
-	final PhysicsBogeyBlockEntity be;
+	final BlockPos pos;
 	final PhysicsBogeyOptions options;
 	final boolean inverted;
+
 	final List<BogeyCategory<?>> mainCategories;
 
 	private SafeSelectionScrollInput mainCategoryInput;
@@ -120,15 +121,12 @@ public class PhysicsBogeyMenuScreen extends AbstractSimiScreen {
 	private List<BogeyDataOptionValue<?>> optionValues = List.of();
 	private int currentOption = 0;
 
-	public PhysicsBogeyMenuScreen(PhysicsBogeyBlockEntity be) {
-		this(be, be.getOptions());
-	}
+	public PhysicsBogeyMenuScreen(PhysicsBogeyMenu menu, Component title) {
+		super(menu, title);
+		pos = menu.pos;
+		options = menu.options;
+		inverted = menu.inverted;
 
-	public PhysicsBogeyMenuScreen(PhysicsBogeyBlockEntity be, PhysicsBogeyOptions options) {
-		super(be.hasCustomName() ? be.getCustomName() : be.isInverted() ? INVERTED_TITLE : TITLE);
-		this.be = be;
-		this.options = new PhysicsBogeyOptions().set(options);
-		inverted = be.isInverted();
 		mainCategories = BogeyMenuManager.getCategories(inverted);
 
 		BogeyMenuSelection menuState = BogeyMenuManager.findEntry(options.type, inverted);
@@ -522,7 +520,9 @@ public class PhysicsBogeyMenuScreen extends AbstractSimiScreen {
 		double wheelAngle = distance / type.wheelRadius();
 		float wheelAngleDeg = (float)Math.toDegrees(wheelAngle) % 360;
 
-		CachedBuffers.block(be.getBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.SOUTH)).
+		CachedBuffers.block(SimurailBlocks.PHYSICS_BOGEY.getDefaultState().
+				setValue(BlockStateProperties.INVERTED, inverted).
+				setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.SOUTH)).
 		translate(-0.5F, -0.5F, -0.5F).
 		light(light).overlay(overlay).
 		renderInto(poseStack, bufferSource.getBuffer(RenderType.cutoutMipped()));
@@ -562,14 +562,15 @@ public class PhysicsBogeyMenuScreen extends AbstractSimiScreen {
 	}
 
 	private void openOptionsScreen() {
-		minecraft.setScreen(new PhysicsBogeyOptionsScreen(be, options));
+		minecraft.setScreen(new PhysicsBogeyOptionsScreen(menu, title));
 	}
 
 	private void onConfirm() {
-		be.renderPivotOffset.step();
-		be.renderPivotRot.step();
-		be.setOptions(options);
-		VeilPacketManager.server().sendPacket(new PhysicsBogeySetOptionsPacket(be.getBlockPos(), options));
+		if(minecraft.level.getBlockEntity(pos) instanceof PhysicsBogeyBlockEntity be) {
+			be.renderPivotOffset.step();
+			be.renderPivotRot.step();
+		}
+		VeilPacketManager.server().sendPacket(new PhysicsBogeySetOptionsPacket(pos, options));
 		onClose();
 	}
 }

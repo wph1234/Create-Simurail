@@ -11,6 +11,7 @@ import com.crystaelix.simurail.content.SimurailBlocks;
 import com.crystaelix.simurail.content.SimurailBogeys;
 import com.crystaelix.simurail.content.SimurailCouplers;
 import com.crystaelix.simurail.content.SimurailItems;
+import com.crystaelix.simurail.content.SimurailMenus;
 import com.crystaelix.simurail.content.SimurailPackets;
 import com.crystaelix.simurail.content.SimurailSoundEvents;
 import com.simibubi.create.foundation.data.CreateRegistrate;
@@ -27,6 +28,7 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 
 @Mod(Simurail.MOD_ID)
 public class Simurail {
@@ -42,6 +44,7 @@ public class Simurail {
 		SimurailBlocks.register();
 		SimurailItems.register();
 		SimurailBlockEntities.register();
+		SimurailMenus.register();
 		SimurailSoundEvents.register(modEventBus);
 		SimurailPackets.register();
 
@@ -60,6 +63,11 @@ public class Simurail {
 			SimurailCompat.BLOCKSBOGIES.ifLoaded(() -> () -> SimurailBlocksBogiesCompat.onCommonSetupLate());
 			SimurailCompat.RAILWAYS.ifLoaded(() -> () -> SimurailRailwaysCompat.onCommonSetupLate());
 		});
+	}
+
+	@SubscribeEvent
+	public void onRegisterCapabilities(RegisterCapabilitiesEvent event) {
+		SimurailBlockEntities.registerCapabilities(event);
 	}
 
 	@SubscribeEvent

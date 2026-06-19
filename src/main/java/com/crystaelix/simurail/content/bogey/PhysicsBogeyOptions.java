@@ -44,6 +44,13 @@ public class PhysicsBogeyOptions {
 		return this;
 	}
 
+	public PhysicsBogeyOptions setNonComputer(PhysicsBogeyOptions other) {
+		type = other.type;
+		renderFrontConnector = other.renderFrontConnector;
+		renderBackConnector = other.renderBackConnector;
+		return this;
+	}
+
 	public PhysicsBogeyOptions setStress(float stress) {
 		this.stress = Math.clamp(stress, 0, 32);
 		return this;

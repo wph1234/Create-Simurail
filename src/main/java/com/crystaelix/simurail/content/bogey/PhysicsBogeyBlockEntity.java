@@ -17,15 +17,18 @@ import com.crystaelix.simurail.api.math.SimurailMath;
 import com.crystaelix.simurail.api.physics.AttachableBoxPhysicsObject;
 import com.crystaelix.simurail.api.physics.SimurailJoints;
 import com.crystaelix.simurail.api.util.SchematicContextUtil;
+import com.crystaelix.simurail.compat.SimurailCompat;
 import com.crystaelix.simurail.compat.computercraft.SimurailComputerCraftProxy;
 import com.crystaelix.simurail.config.SimurailConfig;
 import com.crystaelix.simurail.config.SimurailPhysicsConfig;
+import com.crystaelix.simurail.content.SimurailBlockEntities;
 import com.crystaelix.simurail.content.steering_connector.SteeringConnectable;
 import com.google.common.collect.ImmutableList;
 import com.simibubi.create.compat.computercraft.AbstractComputerBehaviour;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 
+import dan200.computercraft.api.peripheral.PeripheralCapability;
 import dev.ryanhcode.sable.Sable;
 import dev.ryanhcode.sable.api.block.BlockEntitySubLevelActor;
 import dev.ryanhcode.sable.api.physics.constraint.ConstraintJointAxis;
@@ -48,19 +51,27 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.MenuProvider;
 import net.minecraft.world.Nameable;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.AABB;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 
-public class PhysicsBogeyBlockEntity extends KineticBlockEntity implements Nameable, BlockEntitySubLevelActor, SteeringConnectable {
+public class PhysicsBogeyBlockEntity extends KineticBlockEntity implements Nameable, MenuProvider, BlockEntitySubLevelActor, SteeringConnectable {
 
 	public static final double LINEAR_Y_LIMIT = 0.5;
 	public static final double LINEAR_Z_LIMIT = 1;
 	public static final double ANGULAR_X_LIMIT = Math.PI / 12;
 	public static final double ANGULAR_Y_LIMIT = Math.PI * 5 / 12;
 	public static final double ANGULAR_Z_LIMIT = Math.PI / 4;
+
+	public static final Component NAME = Component.translatable("block.simurail.physics_bogey");
+	public static final Component INVERTED_NAME = Component.translatable("item.simurail.inverted_physics_bogey");
 
 	protected boolean initialized = false;
 
@@ -107,6 +118,15 @@ public class PhysicsBogeyBlockEntity extends KineticBlockEntity implements Namea
 		axleBack = new PhysicsBogeyAxle(this, false);
 	}
 
+	public static void registerCapabilities(RegisterCapabilitiesEvent event) {
+		SimurailCompat.COMPUTERCRAFT.ifLoaded(() -> () -> {
+			event.registerBlockEntity(
+					PeripheralCapability.get(),
+					SimurailBlockEntities.PHYSICS_BOGEY.get(),
+					(be, context) -> be.computerBehaviour.getPeripheralCapability());
+		});
+	}
+
 	@Override
 	public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
 		behaviours.add(computerBehaviour = SimurailComputerCraftProxy.behaviour(this));
@@ -114,7 +134,12 @@ public class PhysicsBogeyBlockEntity extends KineticBlockEntity implements Namea
 
 	@Override
 	public Component getName() {
-		return customName;
+		return customName != null ? customName : isInverted() ? INVERTED_NAME : NAME;
+	}
+
+	@Override
+	public Component getDisplayName() {
+		return getName();
 	}
 
 	@Override
@@ -131,13 +156,17 @@ public class PhysicsBogeyBlockEntity extends KineticBlockEntity implements Namea
 	}
 
 	public void setOptions(PhysicsBogeyOptions options) {
-		this.options.set(options);
+		if(computerBehaviour.hasAttachedComputer()) {
+			this.options.setNonComputer(options);
+		}
+		else {
+			this.options.set(options);
+		}
 		axleFront.setOptions();
 		axleBack.setOptions();
 		bogeyData = null;
 		if(!level.isClientSide()) {
 			setChanged();
-			sendData();
 		}
 	}
 
@@ -194,8 +223,8 @@ public class PhysicsBogeyBlockEntity extends KineticBlockEntity implements Namea
 			if(!level.isClientSide()) {
 				setChanged();
 				sendData();
-				// TODO sfx
 			}
+			// TODO sfx
 			otherBogey.propagateConnectSteering(otherFront, this, front);
 		}
 	}
@@ -215,8 +244,8 @@ public class PhysicsBogeyBlockEntity extends KineticBlockEntity implements Namea
 		if(!level.isClientSide()) {
 			setChanged();
 			sendData();
-			// TODO sfx
 		}
+		// TODO sfx
 	}
 
 	@Override
@@ -238,8 +267,8 @@ public class PhysicsBogeyBlockEntity extends KineticBlockEntity implements Namea
 		if(!level.isClientSide()) {
 			setChanged();
 			sendData();
-			// TODO sfx
 		}
+		// TODO sfx
 	}
 
 	protected void propagateDisconnectSteering(boolean front) {
@@ -254,8 +283,8 @@ public class PhysicsBogeyBlockEntity extends KineticBlockEntity implements Namea
 		if(!level.isClientSide()) {
 			setChanged();
 			sendData();
-			// TODO sfx
 		}
+		// TODO sfx
 	}
 
 	public void afterMove() {
@@ -506,8 +535,8 @@ public class PhysicsBogeyBlockEntity extends KineticBlockEntity implements Namea
 	}
 
 	protected void updatePivotLimits(ServerSubLevel subLevel, double timeStep) {
-		boolean hasTrack = axleFront.hasTrack() || axleBack.hasTrack();
-		boolean bothTrack = axleFront.hasTrack() && axleBack.hasTrack();
+		boolean hasTrack = hasTrack();
+		boolean bothTrack = !isDerailed();
 
 		double linYLimit = options.enabled && options.allowVerticalOffset && hasTrack ? LINEAR_Y_LIMIT : 0;
 		double linZLimit = options.enabled && options.allowLateralOffset && hasTrack ? LINEAR_Z_LIMIT : 0;
@@ -742,6 +771,14 @@ public class PhysicsBogeyBlockEntity extends KineticBlockEntity implements Namea
 		double angle = distance / options.type.wheelRadius();
 		return (float)Math.toDegrees(angle) % 360;
 	}
+	
+	public boolean hasTrack() {
+		return axleFront.hasTrack() || axleBack.hasTrack();
+	}
+	
+	public boolean isDerailed() {
+		return !axleFront.hasTrack() || !axleBack.hasTrack();
+	}
 
 	public double getLateralCurvature() {
 		return Math.max(axleFront.kLateral, axleBack.kLateral);
@@ -749,6 +786,11 @@ public class PhysicsBogeyBlockEntity extends KineticBlockEntity implements Namea
 
 	public double getVerticalCurvature() {
 		return (axleFront.kVertical + axleBack.kVertical) * 0.5;
+	}
+
+	@Override
+	public AbstractContainerMenu createMenu(int windowId, Inventory inv, Player player) {
+		return new PhysicsBogeyMenu(windowId, this);
 	}
 
 	@Override

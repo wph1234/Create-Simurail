@@ -11,7 +11,6 @@ import com.simibubi.create.foundation.block.IBE;
 import com.simibubi.create.foundation.block.ProperWaterloggedBlock;
 
 import dev.ryanhcode.sable.api.block.BlockSubLevelAssemblyListener;
-import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -148,7 +147,10 @@ public class PhysicsBogeyBlock extends HorizontalKineticBlock implements IBE<Phy
 		if(stack.getItem() instanceof BlockItem blockItem && blockItem.getBlock() instanceof KineticBlock && hasShaftTowards(level, pos, state, hitResult.getDirection())) {
 			return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 		}
-		CatnipServices.PLATFORM.executeOnClientOnly(() -> () -> withBlockEntityDo(level, pos, be -> PhysicsBogeyScreenOpener.displayScreen(be, player)));
+		if(level.isClientSide()) {
+			return ItemInteractionResult.SUCCESS;
+		}
+		withBlockEntityDo(level, pos, be -> player.openMenu(be, buf -> PhysicsBogeyMenu.prepare(buf, be, player.isSecondaryUseActive())));
 		return ItemInteractionResult.SUCCESS;
 	}
 

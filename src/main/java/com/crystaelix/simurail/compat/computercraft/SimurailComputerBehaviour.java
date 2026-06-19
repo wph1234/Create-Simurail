@@ -2,6 +2,7 @@ package com.crystaelix.simurail.compat.computercraft;
 
 import java.util.function.Supplier;
 
+import com.crystaelix.simurail.compat.computercraft.peripheral.PhysicsBogeyPeripheral;
 import com.crystaelix.simurail.content.bogey.PhysicsBogeyBlockEntity;
 import com.simibubi.create.compat.computercraft.AbstractComputerBehaviour;
 import com.simibubi.create.compat.computercraft.events.ComputerEvent;
@@ -19,6 +20,7 @@ public class SimurailComputerBehaviour extends AbstractComputerBehaviour {
 	
 	public SimurailComputerBehaviour(SmartBlockEntity be) {
 		super(be);
+		this.peripheralSupplier = getPeripheralFor(be);
 		this.be = be;
 	}
 

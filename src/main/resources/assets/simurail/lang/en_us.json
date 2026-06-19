@@ -13,11 +13,9 @@
 
 	"gui.simurail.no_options": "No Options",
 
-	"gui.simurail.physics_bogey.title": "Physics Bogie",
-	"gui.simurail.physics_bogey.title.inverted": "Inverted Physics Bogie",
-	"gui.simurail.physics_bogey.behaviour": "Behavior",
-	"gui.simurail.physics_bogey.behaviour.enabled": "Enabled",
-	"gui.simurail.physics_bogey.behaviour.disabled": "Disabled",
+	"gui.simurail.physics_bogey.physics": "Physics Behavior",
+	"gui.simurail.physics_bogey.physics.enabled": "Enabled",
+	"gui.simurail.physics_bogey.physics.disabled": "Disabled",
 	"gui.simurail.physics_bogey.rotation": "Frame Rotation",
 	"gui.simurail.physics_bogey.rotation.disallow": "Disallow",
 	"gui.simurail.physics_bogey.rotation.allow": "Allow",
@@ -42,6 +40,7 @@
 	"gui.simurail.physics_bogey.connector.invisible": "Invisible",
 	"gui.simurail.physics_bogey.connector.front": "Only Front",
 	"gui.simurail.physics_bogey.connector.back": "Only Back",
+	"gui.simurail.physics_bogey.controlled_by_computer": "Controlled by Computer",
 	"gui.simurail.physics_bogey.type": "Change Bogie Type",
 
 	"gui.simurail.physics_bogey.category": "Category",

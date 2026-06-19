@@ -3,6 +3,7 @@ package com.crystaelix.simurail.compat.electroenergetics;
 import java.util.function.Supplier;
 
 import com.crystaelix.simurail.Simurail;
+import com.crystaelix.simurail.compat.electroenergetics.device.PhysicsBogeyDevice;
 import com.george_vi.electroenergetics.CEERegistries;
 import com.george_vi.electroenergetics.devices.device.SimulatedDevice;
 import com.george_vi.electroenergetics.devices.device.SimulatedDeviceFactory;
