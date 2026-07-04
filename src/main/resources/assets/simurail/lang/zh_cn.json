@@ -290,5 +290,6 @@
 	"simurail_track_type.railways.narrow": "窄轨",
 	"simurail_track_type.railways.narrow.short": "N",
 	"simurail_track_type.railways.wide": "宽轨",
-	"simurail_track_type.railways.wide.short": "W"
+	"simurail_track_type.railways.wide.short": "W",
+	"gui.simurail.physics_bogey.y_offset": "垂向偏移"
 }

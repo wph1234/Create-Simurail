@@ -30,6 +30,7 @@ public class PhysicsBogeyOptionsScreen extends PhysicsBogeyBaseScreen {
 	public static final Component STRESS_TITLE = Component.translatable("gui.simurail.physics_bogey.stress");
 	public static final Component TILT_TITLE = Component.translatable("gui.simurail.physics_bogey.tilt");
 	public static final Component CONNECTOR_TITLE = Component.translatable("gui.simurail.physics_bogey.connector");
+	public static final Component YOFFSET_TITLE = Component.translatable("gui.simurail.physics_bogey.y_offset");
 
 	public static final List<Component> PHYSICS_OPTIONS = List.of(
 			Component.translatable("gui.simurail.physics_bogey.physics.enabled"),
@@ -77,6 +78,7 @@ public class PhysicsBogeyOptionsScreen extends PhysicsBogeyBaseScreen {
 	private SLabel stressLabel;
 	private SLabel tiltLabel;
 	private SLabel connectorLabel;
+	private SLabel yOffsetLabel;
 
 	private SelectionScrollInput physicsInput;
 	private SelectionScrollInput rotationInput;
@@ -86,6 +88,7 @@ public class PhysicsBogeyOptionsScreen extends PhysicsBogeyBaseScreen {
 	private ScrollInput stressInput;
 	private ScrollInput tiltInput;
 	private SelectionScrollInput connectorInput;
+	private ScrollInput yOffsetInput;
 
 	private IconButton bogeyButton;
 	private IconButton confirmButton;
@@ -136,6 +139,10 @@ public class PhysicsBogeyOptionsScreen extends PhysicsBogeyBaseScreen {
 		connectorLabel = new SLabel(x + 45, y + 177, 109, 18);
 		connectorLabel.withMargin(5);
 		connectorLabel.withShadow();
+
+		yOffsetLabel = new SLabel(x + 45, y + 250, 109, 18);
+		yOffsetLabel.withMargin(5);
+		yOffsetLabel.withShadow();
 
 		physicsInput = new SelectionScrollInput(x + 45, y + 23, 109, 18);
 		physicsInput.forOptions(PHYSICS_OPTIONS);
@@ -197,6 +204,15 @@ public class PhysicsBogeyOptionsScreen extends PhysicsBogeyBaseScreen {
 		connectorInput.setState(options.getConnectorType());
 		connectorInput.calling(options::setConnectorType);
 
+		yOffsetInput = new ScrollInput(x + 45, y + 250, 109, 18);
+		yOffsetInput.withRange(-10, 10 + 1);
+		yOffsetInput.withShiftStep(5);
+		yOffsetInput.titled(YOFFSET_TITLE.plainCopy());
+		yOffsetInput.format(i -> Component.literal(String.format("%.1f", i * 0.1F)));
+		yOffsetInput.writingTo(yOffsetLabel);
+		yOffsetInput.setState((int)(options.getYOffset() * 10));
+		yOffsetInput.calling(i -> options.setYOffset(i * 0.1F));
+
 		bogeyButton = new IconButton(x + 7, y + 209, SimurailGuiTextures.PHYSICS_BOGEY_OPTIONS_BOGEY_ICON);
 		bogeyButton.setToolTip(TYPE_TOOLTIP);
 		bogeyButton.withCallback(this::openTypeScreen);
@@ -213,6 +229,7 @@ public class PhysicsBogeyOptionsScreen extends PhysicsBogeyBaseScreen {
 			addRenderableWidget(controlInput);
 			addRenderableWidget(stressInput);
 			addRenderableWidget(tiltInput);
+			addRenderableWidget(yOffsetInput);
 		}
 		else {
 			physicsLabel.withTooltip(List.of(
@@ -248,6 +265,7 @@ public class PhysicsBogeyOptionsScreen extends PhysicsBogeyBaseScreen {
 		addRenderableWidget(stressLabel);
 		addRenderableWidget(tiltLabel);
 		addRenderableWidget(connectorLabel);
+		addRenderableWidget(yOffsetLabel);
 
 		addRenderableWidget(bogeyButton);
 		addRenderableWidget(confirmButton);

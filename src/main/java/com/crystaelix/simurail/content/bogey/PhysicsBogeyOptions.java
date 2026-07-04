@@ -24,6 +24,7 @@ public class PhysicsBogeyOptions {
 
 	private float stress = 8;
 	private double tiltStrength = 0;
+	private float yOffset = 0;
 
 	public PhysicsBogeyOptions() {}
 
@@ -44,6 +45,7 @@ public class PhysicsBogeyOptions {
 		controlMode = other.controlMode;
 		stress = other.stress;
 		tiltStrength = other.tiltStrength;
+		yOffset = other.yOffset;
 		return this;
 	}
 
@@ -69,6 +71,15 @@ public class PhysicsBogeyOptions {
 
 	public PhysicsBogeyOptions setTiltStrength(double tiltStrength) {
 		this.tiltStrength = Math.clamp(tiltStrength, 0, 1);
+		return this;
+	}
+
+	public float getYOffset() {
+		return yOffset;
+	}
+
+	public PhysicsBogeyOptions setYOffset(float yOffset) {
+		this.yOffset = Math.clamp(yOffset, -1, 1);
 		return this;
 	}
 
@@ -182,6 +193,7 @@ public class PhysicsBogeyOptions {
 		tag.putByte("control_mode", (byte)controlMode.ordinal());
 		tag.putFloat("stress", stress);
 		tag.putDouble("tilt_strength", tiltStrength);
+		tag.putFloat("y_offset", yOffset);
 		return tag;
 	}
 
@@ -191,6 +203,7 @@ public class PhysicsBogeyOptions {
 		controlMode = PhysicsBogeyControlMode.BY_ID.apply(tag.getByte("control_mode"));
 		stress = Math.clamp(tag.getFloat("stress"), 0, 32);
 		tiltStrength = Math.clamp(tag.getDouble("tilt_strength"), 0, 1);
+		yOffset = Math.clamp(tag.getFloat("y_offset"), -1, 1);
 		return this;
 	}
 
@@ -200,6 +213,7 @@ public class PhysicsBogeyOptions {
 		PhysicsBogeyControlMode.STREAM_CODEC.encode(buf, controlMode);
 		buf.writeFloat(stress);
 		buf.writeDouble(tiltStrength);
+		buf.writeFloat(yOffset);
 	}
 
 	public PhysicsBogeyOptions decode(ByteBuf buf) {
@@ -208,6 +222,7 @@ public class PhysicsBogeyOptions {
 		controlMode = PhysicsBogeyControlMode.STREAM_CODEC.decode(buf);
 		stress = buf.readFloat();
 		tiltStrength = buf.readDouble();
+		yOffset = buf.readFloat();
 		return this;
 	}
 }

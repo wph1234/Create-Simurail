@@ -59,6 +59,7 @@
 	"gui.simurail.physics_bogey.connector.back": "Only Back",
 	"gui.simurail.physics_bogey.controlled_by_computer": "Controlled by Computer",
 	"gui.simurail.physics_bogey.type": "Change Bogie Type",
+	"gui.simurail.physics_bogey.y_offset": "Vertical Offset",
 
 	"gui.simurail.physics_bogey.category": "Category",
 	"gui.simurail.physics_bogey.subcategory": "Subcategory",

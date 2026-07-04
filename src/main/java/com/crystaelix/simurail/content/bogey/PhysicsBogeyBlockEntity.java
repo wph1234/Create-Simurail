@@ -108,6 +108,7 @@ public class PhysicsBogeyBlockEntity extends KineticBlockEntity implements Namea
 	protected final PhysicsBogeyAxle axleBack;
 	protected double visualSpeed = 0;
 	protected double lastVisualSpeed = 0;
+	protected float lastYOffset = 0;
 
 	// Client rendering components
 	protected final MovingQuaternionfLerp renderPivotRot = MovingQuaternionfLerp.of(2);
@@ -420,7 +421,7 @@ public class PhysicsBogeyBlockEntity extends KineticBlockEntity implements Namea
 	}
 
 	protected void resetPivotPose() {
-		pivotPose.position().set(localCenter).add(localPivotOffset);
+		pivotPose.position().set(localCenter).add(localPivotOffset).add(0, options.getYOffset(), 0);
 		pivotPose.orientation().set(localPivotRot);
 		SubLevel subLevel = Sable.HELPER.getContaining(this);
 		if(subLevel != null) {
@@ -440,7 +441,7 @@ public class PhysicsBogeyBlockEntity extends KineticBlockEntity implements Namea
 		if(pivotJoint == null || !pivotJoint.isValid()) {
 			double angularDamping = config.bogeyPassiveAngularDamping.get();
 			GenericConstraintConfiguration jointConfig = SimurailJoints.pivotJoint(
-					localCenter, SimurailMath.VEC_0,
+					new Vector3d(0, options.getYOffset(), 0).add(localCenter), SimurailMath.VEC_0,
 					getJointOrientation(), SimurailMath.ROT_XPYPZP);
 			pivotJoint = physics.getPipeline().addConstraint(subLevel, pivot, jointConfig);
 			pivotJoint.setContactsEnabled(false);
@@ -471,7 +472,9 @@ public class PhysicsBogeyBlockEntity extends KineticBlockEntity implements Namea
 			if(!computerBehaviour.hasAttachedComputer() && computerOverrides.hasOverrides()) {
 				computerOverrides.reset();
 			}
-			if(Sable.HELPER.getContaining(this) instanceof ServerSubLevel) {
+
+			SubLevel subLevel = Sable.HELPER.getContaining(this);
+			if(subLevel instanceof ServerSubLevel serverSubLevel) {
 				axleFront.updateVisualSpeed();
 				axleBack.updateVisualSpeed();
 
@@ -481,6 +484,12 @@ public class PhysicsBogeyBlockEntity extends KineticBlockEntity implements Namea
 				axleFront.updateInnerProbe();
 				axleBack.updateInnerProbe();
 
+				if (lastYOffset != options.getYOffset()) {
+					removePivot(serverSubLevel);
+					resetPivotPose();
+					createPivot(serverSubLevel);
+				}
+
 				// TODO sfx
 			}
 			else {
@@ -488,13 +497,16 @@ public class PhysicsBogeyBlockEntity extends KineticBlockEntity implements Namea
 				localPivotRot.set(getJointOrientation());
 				resetPivotPose();
 			}
+
 			visualSpeed = Math.abs(axleFront.visualSpeed) > Math.abs(axleBack.visualSpeed) ? axleFront.visualSpeed : axleBack.visualSpeed;
 			if(!lastLocalPivotOffset.equals(localPivotOffset, 1E-4)|| !lastLocalPivotRot.equals(localPivotRot, 1E-4) || lastVisualSpeed != visualSpeed) {
 				VeilPacketManager.tracking(this).sendPacket(new PhysicsBogeyRenderDataPacket(this));
 			}
+
 			lastLocalPivotOffset.set(localPivotOffset);
 			lastLocalPivotRot.set(localPivotRot);
 			lastVisualSpeed = visualSpeed;
+			lastYOffset = options.getYOffset();
 		}
 		else {
 			renderPivotOffset.step(localPivotOffset);
